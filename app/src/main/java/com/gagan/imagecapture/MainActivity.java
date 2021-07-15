@@ -33,6 +33,8 @@ public class MainActivity extends AppCompatActivity {
     File file = null;
     private Uri uri, localUri;
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,14 +74,14 @@ public class MainActivity extends AppCompatActivity {
                 }
                 //bitmap_local = (Bitmap) data.getExtras().get("data");
                 String filePath = file.getPath();
-                bitmap_local= BitmapFactory.decodeFile(filePath);
+                bitmap_local = BitmapFactory.decodeFile(filePath);
 
                 if (localUri_local != null && localUri_local.getPath().length() > 0) {
                     deleteFiles(localUri_local.getPath());
                 }
                 //localUri_local = mCreateURI(bitmap_local);
 
-                Bitmap photo =  mRotateImage(this, bitmap_local, localUri, 2);
+                Bitmap photo = mRotateImage(this, bitmap_local, localUri, 2);
                 imgDisplayImage.setImageBitmap(photo);
 
                 //displayImage(this, file, imgDisplayImage);
@@ -91,14 +93,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void displayImage(Activity activity, File file, ImageView imgDisplayImage) {
-        if (file!=null){
+        if (file != null) {
             String filePath = file.getPath();
             Bitmap bitmap = BitmapFactory.decodeFile(filePath);
             imgDisplayImage.setImageBitmap(bitmap);
         }
     }
-
-
 
     private File getFilePath() {
         //String extr = Environment.getExternalStorageDirectory().toString() + File.separator + "SVAT Images";
@@ -120,7 +120,6 @@ public class MainActivity extends AppCompatActivity {
         uri = Uri.fromFile(file);
         return uri;
     }
-
 
     private Bitmap mRotateImage(Activity activity, Bitmap bitmap, Uri imageUri, int indicator) {
         int rotate = 0;
@@ -152,19 +151,20 @@ public class MainActivity extends AppCompatActivity {
             matrix.postRotate(rotate);
 
             scaledBitmap = Bitmap.createBitmap(bitmap, 0, 0,
-                    bitmap.getWidth(), bitmap.getHeight(),
-                    matrix, true);
+                    bitmap.getWidth(), bitmap.getHeight(), matrix, true);
 
-            /*FileOutputStream fos = null;
+            scaledBitmap = resizeBitmap(scaledBitmap, 1000);
+
+            FileOutputStream fos = null;
             if (indicator == 2) {
                 imageFile = file;
                 fos = new FileOutputStream(imageFile);
                 deleteFiles(imageUri.getPath());
-            }*/
+            }
 
-            //scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
-            /*fos.flush();
-            fos.close();*/
+            scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+            fos.flush();
+            fos.close();
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -172,6 +172,75 @@ public class MainActivity extends AppCompatActivity {
 
 //        return Uri.fromFile(imageFile);
         return scaledBitmap;
+    }
+
+    public  Bitmap resizeBitmap(Bitmap source, int maxLength) {
+        try {
+            if (source.getHeight() >= source.getWidth()) {
+                int targetHeight = maxLength;
+                if (source.getHeight() <= targetHeight) { // if image already smaller than the required height
+                    return source;
+                }
+
+                double aspectRatio = (double) source.getWidth() / (double) source.getHeight();
+                int targetWidth = (int) (targetHeight * aspectRatio);
+
+                Bitmap result = Bitmap.createScaledBitmap(source, targetWidth, targetHeight, false);
+                if (result != source) {
+                }
+                return result;
+            } else {
+                int targetWidth = maxLength;
+
+                if (source.getWidth() <= targetWidth) { // if image already smaller than the required height
+                    return source;
+                }
+
+                double aspectRatio = ((double) source.getHeight()) / ((double) source.getWidth());
+                int targetHeight = (int) (targetWidth * aspectRatio);
+
+                Bitmap result = Bitmap.createScaledBitmap(source, targetWidth, targetHeight, false);
+                if (result != source) {
+                }
+                return result;
+
+            }
+        } catch (Exception e) {
+            return source;
+        }
+    }
+
+    public Bitmap resizeBitmap(String photoPath, int targetW, int targetH) {
+        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+        bmOptions.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(photoPath, bmOptions);
+        int photoW = bmOptions.outWidth;
+        int photoH = bmOptions.outHeight;
+
+        int scaleFactor = 1;
+        if ((targetW > 0) || (targetH > 0)) {
+            scaleFactor = Math.min(photoW / targetW, photoH / targetH);
+        }
+
+        bmOptions.inJustDecodeBounds = false;
+        bmOptions.inSampleSize = scaleFactor;
+        bmOptions.inPurgeable = true; //Deprecated API 21
+
+        return BitmapFactory.decodeFile(photoPath, bmOptions);
+    }
+
+    private Bitmap getResizeBitmap(Bitmap bitmap, int maxSize) {
+        int width = bitmap.getWidth();
+        int height = bitmap.getHeight();
+        float bitmapRatio = (width / height);
+        if (bitmapRatio > 0) {
+            width = maxSize;
+            height = (int) (width / bitmapRatio);
+        } else {
+            height = maxSize;
+            width = (int) (height * bitmapRatio);
+        }
+        return Bitmap.createScaledBitmap(bitmap, width, height, true);
     }
 
     private Uri getOutputMediaFileUri(Context context, File file) {
