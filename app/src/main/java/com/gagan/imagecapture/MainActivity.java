@@ -11,7 +11,10 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -30,9 +33,9 @@ public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_PICTURE_CAPTURE = 100;
     TextView tvCaptureImage;
     ImageView imgDisplayImage;
+    EditText etWidth, etHeight, etQuality;
     File file = null;
     private Uri uri, localUri;
-
 
 
     @Override
@@ -42,6 +45,10 @@ public class MainActivity extends AppCompatActivity {
 
         tvCaptureImage = findViewById(R.id.tvCaptureImage);
         imgDisplayImage = findViewById(R.id.imgDisplayImage);
+
+        etWidth = findViewById(R.id.etWidth);
+        etHeight = findViewById(R.id.etHeight);
+        etQuality = findViewById(R.id.etQuality);
 
         tvCaptureImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -55,6 +62,10 @@ public class MainActivity extends AppCompatActivity {
         file = getFilePath();
         localUri = getImageUrl(file);
 
+        Log.e("MainActivity", "file path " + file.getPath());
+        Log.e("MainActivity", "file path from uri " + localUri.getPath());
+
+
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         Uri photoURI = getOutputMediaFileUri(this, file);
         cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
@@ -67,18 +78,20 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == REQUEST_PICTURE_CAPTURE && resultCode == Activity.RESULT_OK) {
             try {
                 Bitmap bitmap_local = null;
-                Uri localUri_local = null;
+                //Uri localUri_local = null;
 
                 if (uri != null && uri.getPath().length() > 0) {
                     deleteFiles(uri.getPath());
                 }
                 //bitmap_local = (Bitmap) data.getExtras().get("data");
+
                 String filePath = file.getPath();
                 bitmap_local = BitmapFactory.decodeFile(filePath);
 
-                if (localUri_local != null && localUri_local.getPath().length() > 0) {
+
+                /*if (localUri_local != null && localUri_local.getPath().length() > 0) {
                     deleteFiles(localUri_local.getPath());
-                }
+                }*/
                 //localUri_local = mCreateURI(bitmap_local);
 
                 Bitmap photo = mRotateImage(this, bitmap_local, localUri, 2);
@@ -153,16 +166,36 @@ public class MainActivity extends AppCompatActivity {
             scaledBitmap = Bitmap.createBitmap(bitmap, 0, 0,
                     bitmap.getWidth(), bitmap.getHeight(), matrix, true);
 
-            scaledBitmap = resizeBitmap(scaledBitmap, 1000);
+            int width = 0;
+            int height = 0;
+
+            if (!TextUtils.isEmpty(etWidth.getText().toString())) {
+                width = Integer.parseInt(etWidth.getText().toString());
+            }
+
+            if (!TextUtils.isEmpty(etHeight.getText().toString())) {
+                height = Integer.parseInt(etHeight.getText().toString());
+            }
+
+            if (width != 0 && height != 0) {
+                scaledBitmap = Bitmap.createScaledBitmap(bitmap, width, height, true);
+            } else {
+                scaledBitmap = resizeBitmap(scaledBitmap, 1000);
+            }
 
             FileOutputStream fos = null;
             if (indicator == 2) {
                 imageFile = file;
                 fos = new FileOutputStream(imageFile);
-                deleteFiles(imageUri.getPath());
+                //deleteFiles(imageUri.getPath());
             }
 
-            scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+            int Quality = 100;
+            if (!TextUtils.isEmpty(etQuality.getText().toString())) {
+                Quality = Integer.parseInt(etQuality.getText().toString());
+            }
+
+            scaledBitmap.compress(Bitmap.CompressFormat.JPEG, Quality, fos);
             fos.flush();
             fos.close();
 
@@ -174,7 +207,7 @@ public class MainActivity extends AppCompatActivity {
         return scaledBitmap;
     }
 
-    public  Bitmap resizeBitmap(Bitmap source, int maxLength) {
+    public Bitmap resizeBitmap(Bitmap source, int maxLength) {
         try {
             if (source.getHeight() >= source.getWidth()) {
                 int targetHeight = maxLength;

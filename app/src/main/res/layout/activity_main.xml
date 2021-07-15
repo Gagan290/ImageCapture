@@ -6,20 +6,64 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="10dp"
+            android:weightSum="10">
+
+            <EditText
+                android:id="@+id/etWidth"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="10dp"
+                android:layout_weight="5"
+                android:hint="Width"
+                android:textSize="15sp" />
+
+            <EditText
+                android:id="@+id/etHeight"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_weight="5"
+                android:hint="height"
+                android:textSize="15sp" />
+        </LinearLayout>
+
+        <EditText
+            android:id="@+id/etQuality"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:layout_weight="5"
+            android:hint="Quality"
+            android:textSize="15sp" />
+    </LinearLayout>
+
     <TextView
         android:id="@+id/tvCaptureImage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="20dp"
+        android:background="@color/black"
+        android:padding="5dp"
         android:text="Capture Image"
-        android:textColor="@color/black"
+        android:textColor="@color/white"
         android:textSize="20sp" />
 
     <ImageView
         android:id="@+id/imgDisplayImage"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="20dp" />
-
+        android:scaleType="fitXY"
+        android:layout_margin="10dp" />
 </LinearLayout>
