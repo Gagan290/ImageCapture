@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+    <external-path
+        name="external_files"
+        path="." />
+</paths>
+
+
+<!--<paths xmlns:android="http://schemas.android.com/apk/res/android">
+    <external-path name="external_files"
+        path="Android/data/imagecapture.gagan.com.camera/files/Pictures" />
+</paths>-->
+
+<!--    /storage/emulated/0/Android/data/com.gagan.imagecapture/files/Pictures/SVAT Images/svat_15072021012637.jpg-->
