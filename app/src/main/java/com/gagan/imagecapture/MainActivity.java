@@ -29,14 +29,12 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
-
     private static final int REQUEST_PICTURE_CAPTURE = 100;
     TextView tvCaptureImage;
     ImageView imgDisplayImage;
     EditText etWidth, etHeight, etQuality;
     File file = null;
     private Uri uri, localUri;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,14 +100,6 @@ public class MainActivity extends AppCompatActivity {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }
-    }
-
-    private void displayImage(Activity activity, File file, ImageView imgDisplayImage) {
-        if (file != null) {
-            String filePath = file.getPath();
-            Bitmap bitmap = BitmapFactory.decodeFile(filePath);
-            imgDisplayImage.setImageBitmap(bitmap);
         }
     }
 
@@ -257,6 +247,7 @@ public class MainActivity extends AppCompatActivity {
 
         }
     }
+
 
     public Bitmap resizeBitmap(String photoPath, int targetW, int targetH) {
         BitmapFactory.Options bmOptions = new BitmapFactory.Options();
