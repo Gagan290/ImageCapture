@@ -243,6 +243,21 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private Uri getOutputMediaFileUri(Context context, File file) {
+        return FileProvider.getUriForFile(
+                context, context.getPackageName() + ".provider", file
+        );
+    }
+
+    private void deleteFiles(String path) {
+        try {
+            File file = new File(path);
+            boolean deleted = file.delete();
+        } catch (Exception e) {
+
+        }
+    }
+
     public Bitmap resizeBitmap(String photoPath, int targetW, int targetH) {
         BitmapFactory.Options bmOptions = new BitmapFactory.Options();
         bmOptions.inJustDecodeBounds = true;
@@ -274,21 +289,6 @@ public class MainActivity extends AppCompatActivity {
             width = (int) (height * bitmapRatio);
         }
         return Bitmap.createScaledBitmap(bitmap, width, height, true);
-    }
-
-    private Uri getOutputMediaFileUri(Context context, File file) {
-        return FileProvider.getUriForFile(
-                context, context.getPackageName() + ".provider", file
-        );
-    }
-
-    private void deleteFiles(String path) {
-        try {
-            File file = new File(path);
-            boolean deleted = file.delete();
-        } catch (Exception e) {
-
-        }
     }
 
     private Uri mCreateURI(Bitmap bitmap) {
